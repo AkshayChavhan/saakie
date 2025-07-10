@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic rendering for routes that use auth()
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibility
+
 // GET - Get single user
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { userId } = auth();
 
@@ -23,7 +28,7 @@ export async function GET(
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         orders: {
           select: {
@@ -78,8 +83,9 @@ export async function GET(
 // PUT - Update user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { userId } = auth();
 
@@ -100,7 +106,7 @@ export async function PUT(
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     if (!existingUser) {
@@ -112,7 +118,7 @@ export async function PUT(
       const emailExists = await prisma.user.findFirst({
         where: {
           email,
-          id: { not: params.id },
+          id: { not: id },
         },
       });
 
@@ -126,7 +132,7 @@ export async function PUT(
 
     // Update user
     const updatedUser = await prisma.user.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         ...(name && { name }),
         ...(email && { email }),
@@ -182,8 +188,9 @@ export async function PUT(
 // DELETE - Delete user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { userId } = auth();
 
@@ -201,7 +208,7 @@ export async function DELETE(
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     if (!existingUser) {
@@ -218,7 +225,7 @@ export async function DELETE(
 
     // Delete user (this will cascade delete addresses and orders)
     await prisma.user.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
 
     return NextResponse.json({

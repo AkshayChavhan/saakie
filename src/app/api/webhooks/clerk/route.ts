@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic rendering for webhook routes
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibility
+
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 

@@ -3,6 +3,10 @@ import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 import { UserRole, UserStatus } from '@/types';
 
+// Force dynamic rendering for routes that use auth()
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibility
+
 // GET - Fetch all users with pagination and filters
 export async function GET(request: NextRequest) {
   try {
