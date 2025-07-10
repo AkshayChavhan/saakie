@@ -7,13 +7,11 @@ import {
   Package,
   ShoppingBag,
   BarChart3,
-  Database,
   Plus,
   Edit,
   Trash2,
   Save,
   Search,
-  Filter,
   Mail,
   Phone,
   Calendar,
@@ -32,7 +30,7 @@ import {
   useToggleUserStatus,
 } from '@/hooks/useUsers';
 import { UserRole, UserStatus } from '@/types';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatPrice } from '@/lib/utils';
 
 export const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -387,7 +385,7 @@ const UserManagement = () => {
   });
 
   const createUserMutation = useCreateUser();
-  const updateUserMutation = useUpdateUser();
+  const _updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
   const toggleStatusMutation = useToggleUserStatus();
 

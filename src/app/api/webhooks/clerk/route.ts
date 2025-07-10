@@ -114,7 +114,10 @@ export async function POST(req: Request) {
     } catch (error) {
       console.error('❌ Error syncing user:', error);
       return NextResponse.json(
-        { error: 'Error syncing user', details: error.message },
+        {
+          error: 'Error syncing user',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        },
         { status: 500 }
       );
     }

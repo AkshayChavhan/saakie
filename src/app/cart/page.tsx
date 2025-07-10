@@ -31,8 +31,8 @@ export default function CartPage() {
             Your cart is empty
           </h1>
           <p className="mb-8 max-w-md text-gray-600">
-            Looks like you haven't added any beautiful sarees to your cart yet.
-            Browse our collection and find your perfect saree!
+            Looks like you haven&apos;t added any beautiful sarees to your cart
+            yet. Browse our collection and find your perfect saree!
           </p>
           <Link href="/products">
             <Button size="lg">

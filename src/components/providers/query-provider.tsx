@@ -11,7 +11,7 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1 minute
-            cacheTime: 5 * 60 * 1000, // 5 minutes
+            gcTime: 5 * 60 * 1000, // 5 minutes
           },
         },
       })
