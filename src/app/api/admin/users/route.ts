@@ -9,6 +9,14 @@ export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibi
 
 // GET - Fetch all users with pagination and filters
 export async function GET(request: NextRequest) {
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { userId } = auth();
 
@@ -76,7 +84,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Format response data
-    const formattedUsers = users.map((user) => ({
+    const formattedUsers = users.map((user: any) => ({
       id: user.id,
       clerkId: user.clerkId,
       name: user.name,
@@ -88,7 +96,7 @@ export async function GET(request: NextRequest) {
       updatedAt: user.updatedAt,
       orderCount: user._count.orders,
       totalSpent: user.orders.reduce(
-        (sum, order) => sum + order.totalAmount,
+        (sum: number, order: any) => sum + order.totalAmount,
         0
       ),
     }));
@@ -113,6 +121,14 @@ export async function GET(request: NextRequest) {
 
 // POST - Create new user
 export async function POST(request: NextRequest) {
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { userId } = auth();
 

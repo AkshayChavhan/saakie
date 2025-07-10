@@ -5,13 +5,25 @@ import { prisma } from '@/lib/prisma';
 // Force dynamic rendering for routes that use auth()
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibility
+export const revalidate = false; // Disable revalidation for API routes
+
+// Type for params
+type Params = {
+  params: { id: string };
+};
 
 // GET - Get single user
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function GET(request: NextRequest, { params }: Params) {
+  const { id } = params;
+
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { userId } = auth();
 
@@ -63,7 +75,7 @@ export async function GET(
       updatedAt: user.updatedAt,
       orderCount: user._count.orders,
       totalSpent: user.orders.reduce(
-        (sum, order) => sum + order.totalAmount,
+        (sum: number, order: any) => sum + order.totalAmount,
         0
       ),
       orders: user.orders,
@@ -81,11 +93,17 @@ export async function GET(
 }
 
 // PUT - Update user
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function PUT(request: NextRequest, { params }: Params) {
+  const { id } = params;
+
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { userId } = auth();
 
@@ -167,7 +185,7 @@ export async function PUT(
       updatedAt: updatedUser.updatedAt,
       orderCount: updatedUser._count.orders,
       totalSpent: updatedUser.orders.reduce(
-        (sum, order) => sum + order.totalAmount,
+        (sum: number, order: any) => sum + order.totalAmount,
         0
       ),
     };
@@ -186,11 +204,17 @@ export async function PUT(
 }
 
 // DELETE - Delete user
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+export async function DELETE(request: NextRequest, { params }: Params) {
+  const { id } = params;
+
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   try {
     const { userId } = auth();
 

@@ -8,6 +8,14 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs'; // Specify Node.js runtime for Prisma compatibility
 
 export async function POST(req: Request) {
+  // Check if we're in build time or if database is not available
+  if (!prisma || !process.env.DATABASE_URL) {
+    return NextResponse.json(
+      { error: 'Service temporarily unavailable' },
+      { status: 503 }
+    );
+  }
+
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
