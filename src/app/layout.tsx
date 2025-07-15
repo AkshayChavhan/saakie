@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
-import { Suspense } from 'react';
 import { Header } from '@/components/layout/header';
 import { LoadingProvider } from '@/components/providers/loading-provider';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
@@ -43,22 +42,24 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => (
-  <html lang="en">
-    <body className={inter.className}>
-      <ClerkProvider>
-        <QueryProvider>
-          <Suspense>
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <ClerkProvider>
+          <QueryProvider>
             <LoadingProvider>
               <LoadingOverlay />
               <Header />
               <main>{children}</main>
             </LoadingProvider>
-          </Suspense>
-        </QueryProvider>
-      </ClerkProvider>
-    </body>
-  </html>
-);
-
-export default RootLayout;
+          </QueryProvider>
+        </ClerkProvider>
+      </body>
+    </html>
+  );
+}
